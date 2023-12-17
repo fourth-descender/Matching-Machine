@@ -2,6 +2,14 @@
 
 namespace matcher {
 
+    void engine::set_client(const int& client) {
+        m_client = client;
+    };
+
+    int engine::get_client() {
+        return m_client;
+    };
+
     void engine::insert(const std::string& symbol) {
         std::lock_guard<std::mutex> lock(m_book->m_mutex);
         if (m_book->m_symbols.find(symbol) == m_book->m_symbols.end()) {
@@ -18,10 +26,16 @@ namespace matcher {
         m_book->m_asks[order.get_symbol()].push(order);
     };
 
+    void engine::send(const std::string& message) {
+        if (m_client > 0) {
+            m_queue.enqueue(sock::send, m_client, message.c_str(), message.size(), 0);
+        };
+    };
+
     void engine::trade(const types::order& bid, const types::order& ask, const double& amount) {
         std::ostringstream oss;
         oss << "matched: " << bid << " with " << ask << " for " << amount << ".\n";
-        std::cout << oss.str();
+        send(oss.str());
 
         m_book->m_bids[bid.get_symbol()].pop();
         m_book->m_asks[ask.get_symbol()].pop();

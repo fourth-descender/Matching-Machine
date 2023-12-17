@@ -23,6 +23,11 @@ namespace sock {
 
     void connect(int& s, sockaddr_in& addr);
 
+    void send(int& s, const std::string& message);
+
+    // for client side.
+    void send_order(int& s, const char* order);
+
 }
 
 #endif // SOCKS_HPP

@@ -41,4 +41,22 @@ namespace sock {
             exit(EXIT_FAILURE);
         }
     };
+
+    void send(int& s, const std::string& message) {
+        if (::send(s, message.c_str(), message.size(), 0) < 0) {
+            std::cerr << "Error sending message.\n";
+            exit(EXIT_FAILURE);
+        }
+    };
+
+    void send_order(int& s, const char* order) {
+        if (::send(s, order, strlen(order), 0) < 0) {
+            std::cerr << "Error sending order.\n";
+            close(s);
+            exit(EXIT_FAILURE);
+        }
+
+        // order is a pointer to a char array on the stack.
+        delete[] order;
+    };
 }
