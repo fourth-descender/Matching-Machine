@@ -52,15 +52,12 @@ namespace sock {
         }
     };
 
-    void send_order(const int& s, const char* order) {
-        if (::send(s, order, strlen(order), 0) < 0) {
+    void send_order(const int& s, const std::shared_ptr<char[]>& order) {
+        if (::send(s, order.get(), strlen(order.get()), 0) < 0) {
             std::cerr << "Error sending order.\n";
             close(s);
             exit(EXIT_FAILURE);
         }
-
-        // order is a pointer to a char array on the stack.
-        delete[] order;
     };
 
     void receive(const int& s, const int& buffer_size) {

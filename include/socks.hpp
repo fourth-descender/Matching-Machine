@@ -26,7 +26,7 @@ namespace sock {
     void send(const int& s, const std::string& message);
 
     // for client side.
-    void send_order(const int& s, const char* order);
+    void send_order(const int& s, const std::shared_ptr<char[]>& order);
 
     // for client side.
     void receive(const int& s, const int& buffer_size);

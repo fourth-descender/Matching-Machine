@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <mutex>
 #include "jobs.hpp"
 #include "types.hpp"
 #include "socks.hpp"
@@ -26,6 +27,9 @@ namespace matcher {
             std::unique_ptr<types::book> m_book;
             job::queue m_queue{MAX_THREADS};
             int m_client;
+
+            std::mutex m_mutexes_mutex;
+            std::unordered_map<std::string, std::shared_ptr<std::mutex>> m_mutexes;
     };
 }
 

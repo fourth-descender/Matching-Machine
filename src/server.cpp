@@ -73,6 +73,8 @@ void server::process(std::shared_ptr<std::istringstream> iss) {
     while(std::getline(*iss, line, '\n')) {
         types::order order;
         if (!parse(line, order)) {
+            std::cout << "Received: \n";
+            std::cout << line << std::endl;
             std::cerr << "Error parsing order.\n";
             continue;
         };

@@ -18,6 +18,11 @@ namespace matcher {
         if (m_book->m_symbols.find(symbol) == m_book->m_symbols.end()) {
             m_book->m_symbols.insert(symbol);
         };
+
+        std::lock_guard<std::mutex> lock_for_mutexes(m_mutexes_mutex);
+        if (m_mutexes.find(symbol) == m_mutexes.end()) {
+            m_mutexes.emplace(symbol, std::make_shared<std::mutex>());
+        };
     };
 
     void engine::enqueue(const types::order& order) {
@@ -38,6 +43,7 @@ namespace matcher {
     };
 
     void engine::trade(const types::order& bid, const types::order& ask, const double& amount) {
+        std::lock_guard<std::mutex> lock(*m_mutexes[bid.get_symbol()]);
         std::ostringstream oss;
         oss << "matched: " << bid << " with " << ask 
             << " for " << amount << " shares of " << bid.get_symbol() 
@@ -50,11 +56,19 @@ namespace matcher {
     };
 
     void engine::process_symbol(const std::string& symbol) {
+        std::lock_guard<std::mutex> lock(*m_mutexes[symbol]);
         auto& bids = m_book->m_bids[symbol];
         auto& asks = m_book->m_asks[symbol];
         while (!bids.empty() && !asks.empty()) {
-            const auto bid = bids.top();
-            const auto ask = asks.top();
+            const auto bid_top = bids.top();
+            const auto ask_top = asks.top();
+            if (!bid_top.has_value() || !ask_top.has_value()) {
+                return;
+            };
+
+            const auto bid = bid_top.value();
+            const auto ask = ask_top.value();
+
             if (bid.get_price() < ask.get_price()) {
                 return;
             };
