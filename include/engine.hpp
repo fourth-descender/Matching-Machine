@@ -4,6 +4,7 @@
 #include <iostream>
 #include <sstream>
 #include <mutex>
+#include <optional>
 #include "jobs.hpp"
 #include "types.hpp"
 #include "socks.hpp"

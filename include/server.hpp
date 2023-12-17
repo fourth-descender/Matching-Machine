@@ -3,6 +3,7 @@
 
 #include <atomic>
 #include <string>
+#include <chrono>
 #include "jobs.hpp"
 #include "socks.hpp"
 #include "engine.hpp"

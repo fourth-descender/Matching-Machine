@@ -22,8 +22,8 @@ namespace gen {
     std::shared_ptr<char[]> generate_order(int id) {
         const char* action = actions[random_number(0, 1)];
         const char* symbol = symbols[random_number(0, 2)];
-        double price = normal_variable(97.5, 5);
-        int quantity = random_number(25, 50);
+        double price = normal_variable(97.5, 0.5);
+        int quantity = random_number(50, 100);
 
         std::shared_ptr<char[]> order(new char[100]);
 

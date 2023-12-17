@@ -62,7 +62,7 @@ namespace matcher {
             const auto& t_bid = bids.top();
             const auto& t_ask = asks.top();
 
-            if (t_bid == std::nullopt && t_ask == std::nullopt) {
+            if (!t_bid.has_value() && !t_ask.has_value()) {
                 return;
             };
 
@@ -71,7 +71,9 @@ namespace matcher {
             if (!(bid.get_price() >= ask.get_price())) {
                 return;
             };
-            const auto& amount = std::min(bid.get_quantity(), ask.get_quantity());
+
+            // amount not stored by reference because it is modified -> problem in O3 optimization.
+            const auto amount = std::min(bid.get_quantity(), ask.get_quantity());
             lock.unlock();
             trade(bid, ask, amount);
             lock.lock();

@@ -8,6 +8,7 @@
 #include <unordered_map>
 #include <mutex>
 #include <vector>
+#include <optional>
 
 namespace types {
     class order {

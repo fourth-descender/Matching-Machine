@@ -1,11 +1,15 @@
 #ifndef SOCKS_HPP
 #define SOCKS_HPP
 
+#include <iostream>
+#include <cstring>
+#include <cstdlib>
+#include <unistd.h>
+#include <arpa/inet.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include <arpa/inet.h>
-#include <unistd.h>
-#include <iostream>
+#include <cerrno>
+#include <memory>
 
 struct sockaddr_in;
 

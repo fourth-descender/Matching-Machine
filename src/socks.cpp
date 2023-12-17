@@ -63,6 +63,7 @@ namespace sock {
     void receive(const int& s, const int& buffer_size) {
         char buffer[buffer_size];
         ssize_t bytes_read;
+        std::string received_message;
 
         while (true) {
             bytes_read = recv(s, buffer, buffer_size, 0);
@@ -70,15 +71,24 @@ namespace sock {
                 if (bytes_read == 0 || errno == ECONNRESET) {
                     std::cout << "Server disconnected. Exiting...\n";
                     break;
-                };
+                }
                 std::cerr << "Error reading from socket.\n";
                 break;
-            };
+            }
 
-            // null terminate the buffer.
-            buffer[bytes_read] = '\0';
-            std::cout << "Received from server: " << std::endl;
-            std::cout << buffer << std::endl;
-        };
-    }
+            // append the received data to the message buffer.
+            received_message.append(buffer, bytes_read);
+
+            // check if the received message is complete.
+            size_t delimiter_pos;
+            while ((delimiter_pos = received_message.find('\n')) != std::string::npos) {
+                std::string message = received_message.substr(0, delimiter_pos);
+                received_message.erase(0, delimiter_pos + 1);
+
+                // process the complete message.
+                std::cout << message << std::endl;
+            }
+        }
+    };
+
 }

@@ -11,3 +11,10 @@ CTestTestfile.cmake
 _deps
 server_output.txt
 client_output.txt
+avg.txt
+match.txt
+avg
+avg.dSYM/
+.DS_Store
+.vscode/
+

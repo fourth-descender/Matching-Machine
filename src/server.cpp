@@ -23,6 +23,8 @@ server::~server() {
 };
 
 void server::handle() {
+    std::string s_received; // Store the received data
+
     while (m_running) {
         char buffer[BUFFER_SIZE];
         ssize_t bytes = recv(m_client, buffer, BUFFER_SIZE - 1, 0);
@@ -38,10 +40,21 @@ void server::handle() {
         };
 
         buffer[bytes] = '\0';
-        std::shared_ptr<std::istringstream> iss = std::make_shared<std::istringstream>(buffer);
-        m_queue.enqueue([this, iss] {
-            process(iss);
-        });
+        s_received += buffer; // append the received data to the existing data.
+
+        // check if the received data contains a complete batch of orders.
+        size_t delimiter_pos = s_received.find('\n');
+        while (delimiter_pos != std::string::npos) {
+            std::string orderData = s_received.substr(0, delimiter_pos);
+            s_received = s_received.substr(delimiter_pos + 1);
+
+            std::shared_ptr<std::istringstream> iss = std::make_shared<std::istringstream>(orderData);
+            m_queue.enqueue([this, iss] {
+                process(iss);
+            });
+
+            delimiter_pos = s_received.find('\n');
+        }
     };
 
     close(m_client);
@@ -85,7 +98,7 @@ void server::process(std::shared_ptr<std::istringstream> iss) {
 
 void server::run() {
     while (m_running) {
-        if (m_client = accept(m_socket, reinterpret_cast<struct sockaddr*>(&m_client_addr), &m_client_len); m_client < 0) {
+        if ((m_client = accept(m_socket, reinterpret_cast<struct sockaddr*>(&m_client_addr), &m_client_len)) < 0) { // Fix syntax error by adding parentheses around the assignment
             std::cerr << "Error accepting client.\n";
             exit(EXIT_FAILURE);
         };
