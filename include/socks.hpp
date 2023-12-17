@@ -28,6 +28,9 @@ namespace sock {
     // for client side.
     void send_order(int& s, const char* order);
 
+    // for client side.
+    void receive(int& s, std::string& message);
+
 }
 
 #endif // SOCKS_HPP

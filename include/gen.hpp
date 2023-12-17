@@ -9,7 +9,7 @@ namespace gen {
 
     int random_number(const int& min, const int& max);
     
-    double normal_random(const double& mean, const double& stddev);
+    double normal_variable(const double& mean, const double& stddev);
     
     const char* generate_order(int order_id);
 

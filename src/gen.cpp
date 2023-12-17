@@ -12,7 +12,7 @@ namespace gen {
         return dis(gen);
     };
     
-    double normal_random(const double& mean, const double& stddev) {
+    double normal_variable(const double& mean, const double& stddev) {
         std::random_device rd;
         std::mt19937 gen(rd());
         std::normal_distribution<> dis(mean, stddev);
@@ -22,7 +22,7 @@ namespace gen {
     const char* generate_order(int id) {
         const char* action = actions[random_number(0, 1)];
         const char* symbol = symbols[random_number(0, 2)];
-        double price = normal_random(97.5, 5);
+        double price = normal_variable(97.5, 5);
         double quantity = random_number(25, 100);
 
         char* order = new char[100];

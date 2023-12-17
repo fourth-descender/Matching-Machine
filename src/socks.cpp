@@ -59,4 +59,25 @@ namespace sock {
         // order is a pointer to a char array on the stack.
         delete[] order;
     };
+
+    void receive(int& s, const int& buffer_size) {
+        char buffer[buffer_size];
+        ssize_t bytes_read;
+
+        while (true) {
+            bytes_read = recv(s, buffer, buffer_size, 0);
+            if (bytes_read <= 0) {
+                if (bytes_read == 0 || errno == ECONNRESET) {
+                    std::cout << "Server disconnected. Exiting...\n";
+                    break;
+                };
+                perror("recv failed!\n");
+                break;
+            };
+
+            // null terminate the buffer.
+            buffer[bytes_read] = '\0';
+            std::cout << "Received from server: " << buffer << std::endl;
+        };
+    }
 }
