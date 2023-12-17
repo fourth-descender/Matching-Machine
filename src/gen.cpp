@@ -28,7 +28,7 @@ namespace gen {
         std::shared_ptr<char[]> order(new char[100]);
 
         // use snprintf to avoid buffer overflow as per warning instruction.
-        snprintf(order.get(), 100, "%s %d %s %.2f %d\n", action, id, symbol, price, quantity);
+        snprintf(order.get(), 100, "%s %d %s %.1f %d\n", action, id, symbol, price, quantity);
 
         return order;
     };

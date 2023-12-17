@@ -47,8 +47,7 @@ namespace matcher {
         std::ostringstream oss;
         oss << "matched: " << bid << " with " << ask 
             << " for " << amount << " shares of " << bid.get_symbol() 
-            << " for $" << bid.get_price() << ".\n";
-            
+            << " for $" << ask.get_price() << ".\n";
         send(oss.str());
 
         m_book->m_bids[bid.get_symbol()].pop();
@@ -56,25 +55,26 @@ namespace matcher {
     };
 
     void engine::process_symbol(const std::string& symbol) {
-        std::lock_guard<std::mutex> lock(*m_mutexes[symbol]);
+        std::unique_lock<std::mutex> lock(*m_mutexes[symbol]);
         auto& bids = m_book->m_bids[symbol];
         auto& asks = m_book->m_asks[symbol];
         while (!bids.empty() && !asks.empty()) {
-            const auto bid_top = bids.top();
-            const auto ask_top = asks.top();
-            if (!bid_top.has_value() || !ask_top.has_value()) {
+            const auto& t_bid = bids.top();
+            const auto& t_ask = asks.top();
+
+            if (t_bid == std::nullopt && t_ask == std::nullopt) {
                 return;
             };
 
-            const auto bid = bid_top.value();
-            const auto ask = ask_top.value();
-
-            if (bid.get_price() < ask.get_price()) {
+            const auto& bid = t_bid.value();
+            const auto& ask = t_ask.value();
+            if (!(bid.get_price() >= ask.get_price())) {
                 return;
             };
-
             const auto& amount = std::min(bid.get_quantity(), ask.get_quantity());
+            lock.unlock();
             trade(bid, ask, amount);
+            lock.lock();
 
             if (bid.get_quantity() < ask.get_quantity()) {
                 const auto& new_ask = types::order(

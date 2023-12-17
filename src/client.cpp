@@ -6,7 +6,7 @@
 #define SERVER_PORT 12345
 #define BUFFER_SIZE 1024
 #define NUM_ORDERS 1000000
-#define MAX_THREADS 5
+#define MAX_THREADS 3
 
 int main() {
     int client;
@@ -23,27 +23,23 @@ int main() {
         jobs.enqueue(sock::send_order, client, gen::generate_order(i + 1));
     };
 
-    // sample orders, remove delete[] order in send_order to use.
-    // used for test cases -> passed all three cases.
-    // const char* orders[] = {
-    //    //  time priority.
-    //     "SELL 2 ABC 100 2\n",
-    //     "SELL 3 ABC 100 2\n",
-    //     "BUY 1 ABC 100 2\n",
-
-    //    //  best price.
-    //     "SELL 13 BAC 99 1\n",
-    //     "SELL 12 BAC 100 1\n",   
-    //     "BUY 11 BAC 100 1\n",
-
-    //    //  partial fills.
-    //     "SELL 23 CAB 99 1\n",
-    //     "SELL 22 CAB 100 2\n",
-    //     "BUY 21 CAB 100 4\n",
+    // std::shared_ptr<char[]> shared_orders[] = {
+    //     // time-priority -> matches buyer 1 and seller 2.
+    //     std::shared_ptr<char[]>(strdup("SELL 2 ABC 100 2\n"), free),
+    //     std::shared_ptr<char[]>(strdup("SELL 3 ABC 100 2\n"), free),
+    //     std::shared_ptr<char[]>(strdup("BUY 1 ABC 100 2\n"), free),
+    //     // best price -> matches buyer 11 and seller 13.
+    //     std::shared_ptr<char[]>(strdup("SELL 13 BAC 99 1\n"), free),
+    //     std::shared_ptr<char[]>(strdup("SELL 12 BAC 100 1\n"), free),
+    //     std::shared_ptr<char[]>(strdup("BUY 11 BAC 100 1\n"), free),
+    //     // partial fill -> matches buyer 21 with both seller 22 and 23.
+    //     std::shared_ptr<char[]>(strdup("SELL 23 CAB 99 1\n"), free),
+    //     std::shared_ptr<char[]>(strdup("SELL 22 CAB 100 2\n"), free),
+    //     std::shared_ptr<char[]>(strdup("BUY 21 CAB 100 4\n"), free)
     // };
 
     // for (int i = 0; i < 9; i++) {
-    //     jobs.enqueue(sock::send_order, client, orders[i]);
+    //     jobs.enqueue(sock::send_order, client, shared_orders[i]);
     // };
 
     receiver.join();
