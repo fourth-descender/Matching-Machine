@@ -9,10 +9,17 @@ do { \
     std::cout << "Time taken to process order: " << duration.count() << " microseconds" << std::endl; \
 } while(0)
 
-void server::sighandler(int signum) {
-    std::cout << "Caught signal " << signum << ".\n";
+server::server() {
+    m_client_len = sizeof(struct sockaddr_in);
+    sock::create(m_socket);
+    sock::configure(m_addr, PORT);
+    sock::bind(m_socket, m_addr);
+    sock::listen(m_socket, MAX_CLIENTS, PORT);
+};
+
+server::~server() {
     m_running = false;
-    close(m_engine.get_client());
+    close(m_socket);
 };
 
 void server::handle() {
@@ -32,7 +39,9 @@ void server::handle() {
 
         buffer[bytes] = '\0';
         std::shared_ptr<std::istringstream> iss = std::make_shared<std::istringstream>(buffer);
-        m_queue.enqueue(process, iss);
+        m_queue.enqueue([this, iss] {
+            process(iss);
+        });
     };
 
     close(m_client);
@@ -67,18 +76,21 @@ void server::process(std::shared_ptr<std::istringstream> iss) {
             std::cerr << "Error parsing order.\n";
             continue;
         };
+        std::cout << "Received order: " << order << std::endl;
         TIME(m_engine.process(order));
     };
 };
 
 void server::run() {
     while (m_running) {
-        if (m_client = accept(m_socket, (sockaddr*) &m_client_addr, (socklen_t*) &m_client_addr), m_client < 0) {
+        if (m_client = accept(m_socket, reinterpret_cast<struct sockaddr*>(&m_client_addr), &m_client_len); m_client < 0) {
             std::cerr << "Error accepting client.\n";
             exit(EXIT_FAILURE);
-        }; 
+        };
 
         m_engine.set_client(m_client);
-        m_queue.enqueue(handle, m_client);
+        m_queue.enqueue([this] {
+            handle();
+        });
     };
 };

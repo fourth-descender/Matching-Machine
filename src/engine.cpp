@@ -31,13 +31,18 @@ namespace matcher {
 
     void engine::send(const std::string& message) {
         if (m_client > 0) {
-            m_queue.enqueue(sock::send, m_client, message.c_str(), message.size(), 0);
+            m_queue.enqueue([this, message] {
+                sock::send(m_client, message);
+            });
         };
     };
 
     void engine::trade(const types::order& bid, const types::order& ask, const double& amount) {
         std::ostringstream oss;
-        oss << "matched: " << bid << " with " << ask << " for " << amount << ".\n";
+        oss << "matched: " << bid << " with " << ask 
+            << " for " << amount << " shares of " << bid.get_symbol() 
+            << " for $" << bid.get_price() << ".\n";
+            
         send(oss.str());
 
         m_book->m_bids[bid.get_symbol()].pop();
@@ -99,7 +104,9 @@ namespace matcher {
 
     void engine::match() {
         for (const auto& symbol : m_book->m_symbols) {
-            m_queue.enqueue(process_symbol, symbol);
+            m_queue.enqueue([this, symbol]() {
+                process_symbol(symbol);
+            });
         };
     }
 }

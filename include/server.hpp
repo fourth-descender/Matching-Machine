@@ -8,16 +8,17 @@
 #include "engine.hpp"
 
 #define MAX_THREADS 5
+#define PORT 12345
 #define BUFFER_SIZE 1024
+#define MAX_CLIENTS 5
 
 class server {
     public:
-        server() = default;
-        ~server() = default;
+        server();
+        ~server();
         void run();
     private:
         void handle();
-        void sighandler(int signum);
         void process(std::shared_ptr<std::istringstream> iss);
         bool parse(std::string& line, types::order& order);
 
@@ -27,6 +28,7 @@ class server {
         int m_socket, m_client;
         std::atomic <bool> m_running{true};
         sockaddr_in m_addr, m_client_addr;
+        socklen_t m_client_len;
 };
 
 #endif // SERVER_HPP

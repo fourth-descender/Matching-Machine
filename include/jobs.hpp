@@ -25,7 +25,7 @@ namespace job {
                             if (m_terminate && m_tasks.empty()) {
                                 return;
                             }
-                            task = std::move(m_tasks.front());
+                            task = m_tasks.front();
                             m_tasks.pop();
                         }
                         task();

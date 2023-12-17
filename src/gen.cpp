@@ -23,12 +23,12 @@ namespace gen {
         const char* action = actions[random_number(0, 1)];
         const char* symbol = symbols[random_number(0, 2)];
         double price = normal_variable(97.5, 5);
-        double quantity = random_number(25, 100);
+        int quantity = random_number(25, 50);
 
         char* order = new char[100];
 
         // use snprintf to avoid buffer overflow as per warning instruction.
-        snprintf(order, 100, "%s %d %d %d %s\n", action, id, price, quantity, symbol);
+        snprintf(order, 100, "%s %d %s %.1f %d\n", action, id, symbol, price, quantity);
 
         return order;
     };

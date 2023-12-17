@@ -20,7 +20,7 @@ namespace types {
 
             order() = default;
 
-            order(const side& side, const std::string& id, const std::string& symbol, const double& price, const double& quantity, const std::time_t& timestamp) :
+            order(const side& side, const std::string& id, const std::string& symbol, const double& price, const int& quantity, const std::time_t& timestamp) :
                 m_side(side),
                 m_id(id),
                 m_symbol(symbol),
@@ -45,7 +45,7 @@ namespace types {
                 return m_price;
             };
 
-            double get_quantity() const {
+            int get_quantity() const {
                 return m_quantity;
             };
 
@@ -67,7 +67,7 @@ namespace types {
             std::string m_id;
             std::string m_symbol;
             double m_price;
-            double m_quantity;
+            int m_quantity;
             std::time_t m_timestamp;
     };
 
@@ -100,13 +100,8 @@ namespace types {
                 return m_queue.size();
             };
 
-            void push(const order& order) {
-                std::lock_guard<std::mutex> lock(m_mutex);
-                m_queue.push(order);
-            };
-
         private:
-            std::priority_queue<order, std::vector<order>, std::greater<order>()> m_queue;
+            std::priority_queue<order, std::vector<order>, std::greater<order>> m_queue;
             std::mutex m_mutex;
     };
 
