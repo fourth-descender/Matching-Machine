@@ -11,7 +11,7 @@
 namespace matcher {
     class engine {
         public:
-            engine() = default;
+            engine();
             ~engine() = default;
             int get_client();
             void set_client(const int& client);

@@ -1,6 +1,9 @@
 #include "engine.hpp"
 
 namespace matcher {
+    engine::engine() :
+        m_client(-1) {
+    };
 
     void engine::set_client(const int& client) {
         m_client = client;
