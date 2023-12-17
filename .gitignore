@@ -9,5 +9,5 @@ install_manifest.txt
 compile_commands.json
 CTestTestfile.cmake
 _deps
-server_output
-client_output
+server_output.txt
+client_output.txt
