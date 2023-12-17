@@ -3,8 +3,10 @@
 
 #include <iostream>
 #include <sstream>
+#include "jobs.hpp"
 #include "types.hpp"
 
+#define MAX_THREADS 5
 namespace matcher {
     class engine {
         public:
@@ -18,6 +20,7 @@ namespace matcher {
             void trade(const types::order& bid, const types::order& ask, const double& amount);
             void process_symbol(const std::string& symbol);
             std::unique_ptr<types::book> m_book;
+            job::queue m_queue{MAX_THREADS};
     };
 }
 

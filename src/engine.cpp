@@ -82,7 +82,7 @@ namespace matcher {
 
     void engine::match() {
         for (const auto& symbol : m_book->m_symbols) {
-            process_symbol(symbol);
+            m_queue.enqueue(process_symbol, symbol);
         };
     }
 }

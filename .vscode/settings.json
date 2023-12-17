@@ -2,6 +2,8 @@
     "files.associations": {
         "queue": "cpp",
         "vector": "cpp",
-        "iosfwd": "cpp"
+        "iosfwd": "cpp",
+        "thread": "cpp",
+        "__mutex_base": "cpp"
     }
 }
