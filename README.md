@@ -93,7 +93,7 @@ Then, run:
 If you employed a Dockerfile and want to extract data from the container logs, follow these steps:
 
 ```bash
-docker logs match-engine-server-1 \
+docker logs matching-machine-server-1 \
     | grep "Time " \
     | awk '{
         sum += $6
