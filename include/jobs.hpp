@@ -12,8 +12,7 @@ namespace job {
 
     class queue {
     public:
-        queue(const int& size) {
-            m_terminate = false;
+        queue(const int& size) : m_terminate(false) {
             for (int i = 0; i < size; ++i) {
                 m_threads.emplace_back([this]() {
                     while (true) {
