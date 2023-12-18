@@ -32,7 +32,7 @@ Start the server by running the `server` executable:
 ./server
 ```
 
-The server operates on port 12345. You can send orders to the server in the format `ACTION ID SYMBOL PRICE QUANTITY` using tools like telnet or netcat. For example:
+The server operates on port 12345. You can send orders to the server in the format `ACTION ID SYMBOL PRICE QUANTITY` using tools like `telnet` or `netcat`. Ensure that `ACTION` is specified as either `BUY` or `SELL` in all capital letters, and `QUANTITY` must be an integer.. For example:
 
 ```bash
 nc localhost 12345
