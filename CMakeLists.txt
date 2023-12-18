@@ -14,6 +14,8 @@ if(DEFINED ENV{DOCKER_ENV})
     add_definitions(-DDOCKER_ENV)
 endif()
 
+find_package(Threads REQUIRED)
+
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/build)
@@ -27,7 +29,9 @@ list(REMOVE_ITEM CLIENT_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp")
 # for server.
 add_executable(server ${SERVER_SOURCES})
 target_include_directories(server PRIVATE include)
+target_link_libraries(server PRIVATE Threads::Threads)
 
 # for client.
 add_executable(client ${CLIENT_SOURCES})
 target_include_directories(client PRIVATE include)
+target_link_libraries(client PRIVATE Threads::Threads)

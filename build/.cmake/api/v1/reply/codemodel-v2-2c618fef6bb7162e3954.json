@@ -41,14 +41,14 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "client::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-client-Debug-83bb567bacd73b8a25f6.json",
+					"jsonFile" : "target-client-Debug-8a71d5670fce6680acd2.json",
 					"name" : "client",
 					"projectIndex" : 0
 				},
 				{
 					"directoryIndex" : 0,
 					"id" : "server::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-server-Debug-5e50f84981dc4cd8f13e.json",
+					"jsonFile" : "target-server-Debug-718ae61dba3022783ef8.json",
 					"name" : "server",
 					"projectIndex" : 0
 				}
@@ -58,8 +58,8 @@
 	"kind" : "codemodel",
 	"paths" : 
 	{
-		"build" : "/Users/me/Dev/C++/Match-Engine/build",
-		"source" : "/Users/me/Dev/C++/Match-Engine"
+		"build" : "/Users/me/Dev/C++/Matching-Machine/build",
+		"source" : "/Users/me/Dev/C++/Matching-Machine"
 	},
 	"version" : 
 	{
