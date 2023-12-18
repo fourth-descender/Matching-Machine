@@ -3,6 +3,7 @@
 namespace matcher {
     engine::engine() :
         m_client(-1) {
+            m_book = std::make_unique<types::book>();
     };
 
     void engine::set_client(const int& client) {
@@ -14,12 +15,13 @@ namespace matcher {
     };
 
     void engine::insert(const std::string& symbol) {
-        std::lock_guard<std::mutex> lock(m_book->m_mutex);
+        std::lock(m_book->m_mutex, m_mutexes_mutex);
+        std::lock_guard<std::mutex> lock(m_book->m_mutex, std::adopt_lock);
         if (m_book->m_symbols.find(symbol) == m_book->m_symbols.end()) {
             m_book->m_symbols.insert(symbol);
         };
 
-        std::lock_guard<std::mutex> lock_for_mutexes(m_mutexes_mutex);
+        std::lock_guard<std::mutex> lock_for_mutexes(m_mutexes_mutex, std::adopt_lock);
         if (m_mutexes.find(symbol) == m_mutexes.end()) {
             m_mutexes.emplace(symbol, std::make_shared<std::mutex>());
         };
@@ -110,7 +112,7 @@ namespace matcher {
 
     void engine::process(const types::order& order) {
         if (!m_book) {
-            m_book = std::make_unique<types::book>();
+            return;
         };
 
         insert(order.get_symbol());
