@@ -77,7 +77,7 @@ cat server_output.txt \
 ```
 
 #### Alternative: Compile and Use avg.cpp
-If you saved the output to a file (specifically `server_output.txt`), you can use a compiled C++ program (avg.cpp). Compile it with:
+If you saved the output to a file (e.g. `server_output.txt`), you can use a compiled C++ program (avg.cpp). Compile it with:
 
 ```bash
 gcc -g avg.cpp -o avg -O3
@@ -86,7 +86,7 @@ gcc -g avg.cpp -o avg -O3
 Then, run:
 
 ```bash
-./avg
+./avg server_output.txt
 ```
 
 #### Docker Container (Assuming Dockerfile Usage)
