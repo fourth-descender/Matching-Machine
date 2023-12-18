@@ -10,6 +10,10 @@ else()
     message("g++ compiler not found, using default system compiler")
 endif()
 
+if(DEFINED ENV{DOCKER_ENV})
+    add_definitions(-DDOCKER_ENV)
+endif()
+
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/build)

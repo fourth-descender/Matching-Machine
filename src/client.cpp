@@ -3,6 +3,10 @@
 #include "gen.hpp"
 
 #define SERVER_ADDRESS "127.0.0.1"
+#ifdef DOCKER_ENV
+    #define SERVER_ADDRESS "server"
+#endif
+
 #define SERVER_PORT 12345
 #define BUFFER_SIZE 1024
 #define NUM_ORDERS 1000000

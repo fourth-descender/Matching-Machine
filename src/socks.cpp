@@ -19,8 +19,13 @@ namespace sock {
     void configure(sockaddr_in& addr, const int& port, const char* ip) {
         memset(&addr, 0, sizeof(addr));
         addr.sin_family = AF_INET;
-        addr.sin_addr.s_addr = inet_addr(ip);
         addr.sin_port = htons(port);
+        addr.sin_addr.s_addr = inet_addr(ip);
+        // for docker -> 127.0.0.1 becomes the container itself.
+        // could also be the case for a VM or invalid IP.
+        if (addr.sin_addr.s_addr == INADDR_NONE) {
+            addr.sin_addr = resolve_hostname(ip);
+        }
     };
 
     void bind(int& s, sockaddr_in& addr) {
@@ -91,4 +96,21 @@ namespace sock {
         }
     };
 
+    in_addr resolve_hostname(const char* hostname) {
+        addrinfo hints, *res;
+        memset(&hints, 0, sizeof(hints));
+        hints.ai_family = AF_INET;
+        hints.ai_socktype = SOCK_STREAM;
+
+        if (getaddrinfo(hostname, NULL, &hints, &res) != 0) {
+            std::cerr << "Error resolving hostname.\n";
+            exit(EXIT_FAILURE);
+        }
+
+        in_addr addr = ((sockaddr_in*)res->ai_addr)->sin_addr;
+
+        freeaddrinfo(res);
+
+        return addr;
+    };
 }

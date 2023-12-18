@@ -10,7 +10,10 @@
 #include <netinet/in.h>
 #include <cerrno>
 #include <memory>
+#include <netdb.h> 
 
+struct in_addr;
+struct addrinfo;
 struct sockaddr_in;
 
 namespace sock {
@@ -34,6 +37,9 @@ namespace sock {
 
     // for client side.
     void receive(const int& s, const int& buffer_size);
+
+    // for docker.
+    in_addr resolve_hostname(const char* hostname);
 
 }
 
