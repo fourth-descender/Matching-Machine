@@ -23,38 +23,16 @@ server::~server() {
 };
 
 void server::handle() {
-    std::string s_received; // Store the received data
+    std::string received; // Store the received data
 
     while (m_running) {
-        char buffer[BUFFER_SIZE];
-        ssize_t bytes = recv(m_client, buffer, BUFFER_SIZE - 1, 0);
-
-        if (bytes < 0) {
-            std::cerr << "Error reading from socket.\n";
-            exit(EXIT_FAILURE);
-        };
-
-        if (bytes == 0) {
-            std::cout << "Client disconnected.\n";
-            break;
-        };
-
-        buffer[bytes] = '\0';
-        s_received += buffer; // append the received data to the existing data.
-
-        // check if the received data contains a complete batch of orders.
-        size_t delimiter_pos = s_received.find('\n');
-        while (delimiter_pos != std::string::npos) {
-            std::string orderData = s_received.substr(0, delimiter_pos);
-            s_received = s_received.substr(delimiter_pos + 1);
-
-            std::shared_ptr<std::istringstream> iss = std::make_shared<std::istringstream>(orderData);
+        sock::receive(m_client, received, BUFFER_SIZE);
+        sock::process_received(received, [this](std::string& message) {
+            std::shared_ptr<std::istringstream> iss = std::make_shared<std::istringstream>(message);
             m_queue.enqueue([this, iss] {
                 process(iss);
             });
-
-            delimiter_pos = s_received.find('\n');
-        }
+        });
     };
 
     close(m_client);

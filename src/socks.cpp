@@ -65,34 +65,46 @@ namespace sock {
         }
     };
 
-    void receive(const int& s, const int& buffer_size) {
+    void receive(const int& s, std::string& received, const int& buffer_size) {
+        char buffer[buffer_size];
+        ssize_t bytes_read = recv(s, buffer, buffer_size - 1, 0);
+        if (bytes_read < 0) {
+            std::cerr << "Error reading from socket.\n";
+            exit(EXIT_FAILURE);
+        }
+
+        if (bytes_read == 0) {
+            std::cout << "Server disconnected.\n";
+            close(s);
+            exit(EXIT_FAILURE);
+        }
+
+        buffer[bytes_read] = '\0';
+        received.append(buffer);
+    };
+
+    void receive_from_server(const int& s, const int& buffer_size) {
         char buffer[buffer_size];
         ssize_t bytes_read;
-        std::string received_message;
+        std::string received;
 
         while (true) {
-            bytes_read = recv(s, buffer, buffer_size, 0);
-            if (bytes_read <= 0) {
-                if (bytes_read == 0 || errno == ECONNRESET) {
-                    std::cout << "Server disconnected. Exiting...\n";
-                    break;
-                }
-                std::cerr << "Error reading from socket.\n";
-                break;
-            }
-
-            // append the received data to the message buffer.
-            received_message.append(buffer, bytes_read);
-
-            // check if the received message is complete.
-            size_t delimiter_pos;
-            while ((delimiter_pos = received_message.find('\n')) != std::string::npos) {
-                std::string message = received_message.substr(0, delimiter_pos);
-                received_message.erase(0, delimiter_pos + 1);
-
-                // process the complete message.
+            receive(s, received, buffer_size);
+            process_received(received, [](std::string& message) {
                 std::cout << message << std::endl;
-            }
+            });
+        }
+    };
+
+    void process_received(std::string& received, std::function<void(std::string&)> func) {
+        // check if the received message is complete.
+        size_t delimiter_pos;
+        while ((delimiter_pos = received.find('\n')) != std::string::npos) {
+            std::string message = received.substr(0, delimiter_pos);
+            received.erase(0, delimiter_pos + 1);
+
+            // process the complete message.
+            func(message);
         }
     };
 

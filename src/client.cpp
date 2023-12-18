@@ -21,7 +21,7 @@ int main() {
     sock::configure(addr, SERVER_PORT, SERVER_ADDRESS);
     sock::connect(client, addr);
 
-    std::thread receiver(sock::receive, client, BUFFER_SIZE);
+    std::thread receiver(sock::receive_from_server, client, BUFFER_SIZE);
 
     for (int i = 0; i < NUM_ORDERS; i++) {
         jobs.enqueue(sock::send_order, client, gen::generate_order(i + 1));

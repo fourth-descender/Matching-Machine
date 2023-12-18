@@ -11,6 +11,7 @@
 #include <cerrno>
 #include <memory>
 #include <netdb.h> 
+#include <functional>
 
 struct in_addr;
 struct addrinfo;
@@ -32,11 +33,15 @@ namespace sock {
 
     void send(const int& s, const std::string& message);
 
+    void receive(const int& s, std::string& received, const int& buffer_size);
+
+    void process_received(std::string& received, std::function<void(std::string&)> func);
+
     // for client side.
     void send_order(const int& s, const std::shared_ptr<char[]>& order);
 
     // for client side.
-    void receive(const int& s, const int& buffer_size);
+    void receive_from_server(const int& s, const int& buffer_size);
 
     // for docker.
     in_addr resolve_hostname(const char* hostname);
