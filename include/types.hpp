@@ -81,9 +81,14 @@ namespace types {
                 m_queue.push(order);
             };
 
-            void pop() {
+            std::optional<order> pop() {
                 std::lock_guard<std::mutex> lock(m_mutex);
+                if (m_queue.empty()) {
+                    return std::nullopt;
+                }
+                auto top = m_queue.top();
                 m_queue.pop();
+                return top;
             };
 
             std::optional<order> top() {
