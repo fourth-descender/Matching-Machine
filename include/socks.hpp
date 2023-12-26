@@ -35,7 +35,7 @@ namespace sock {
 
     void send(const int& s, const std::string& message);
 
-    bool receive(const int& s, std::string& received, const int& buffer_size, const bool& verbose = false);
+    bool receive(const int& s, std::string& received, const int& buffer_size, const bool& server = false);
 
     void process_received(std::string& received, std::function<void(std::string&)> func);
 
