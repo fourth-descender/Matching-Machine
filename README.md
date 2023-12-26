@@ -56,9 +56,9 @@ The `client` and `other_client` executables are designed to automatically genera
   ```bash
   build/bin/client
   ```
-- Alternatively, you can use the other_client executable by running:
+- Alternatively, you can use the `other_client` executable by running:
   ```bash
-  build/bin/client
+  build/bin/other_client
   ```
 To run both processes simultaneously, execute the following command:
 ```bash
