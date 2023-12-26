@@ -13,6 +13,8 @@ server::server() {
     m_client_len = sizeof(struct sockaddr_in);
     sock::create(m_socket);
     sock::configure(m_addr, PORT);
+    // set to non-blocking for multiple clients.
+    fcntl(m_socket, F_SETFL, O_NONBLOCK);
     sock::bind(m_socket, m_addr);
     sock::listen(m_socket, MAX_CLIENTS, PORT);
 };
@@ -22,13 +24,13 @@ server::~server() {
     close(m_socket);
 };
 
-void server::handle() {
+void server::handle(int client) {
     std::string received; // Store the received data
 
     while (m_running) {
-        bool success = sock::receive(m_client, received, BUFFER_SIZE, true);
+        bool success = sock::receive(client, received, BUFFER_SIZE, true);
         if (!success) {
-            m_engine.remove_client(m_client);
+            m_engine.remove_client(client);
             return;
         };
         sock::process_received(received, [this](std::string& message) {
@@ -39,8 +41,8 @@ void server::handle() {
         });
     };
 
-    m_engine.remove_client(m_client);
-    close(m_client);
+    m_engine.remove_client(client);
+    close(client);
 };
 
 bool server::parse(std::string& line, types::order& order) {
@@ -81,14 +83,15 @@ void server::process(std::shared_ptr<std::istringstream> iss) {
 
 void server::run() {
     while (m_running) {
-        if ((m_client = accept(m_socket, reinterpret_cast<struct sockaddr*>(&m_client_addr), &m_client_len)) < 0) { 
-            std::cerr << "Error accepting client.\n";
+        int client;
+        if ((client = accept(m_socket, reinterpret_cast<struct sockaddr*>(&m_client_addr), &m_client_len)) < 0) { 
+            // std::cerr << "Error accepting client.\n";
             continue;
         };
-
-        m_engine.add_client(m_client);
-        m_queue.enqueue([this] {
-            handle();
+        std::cout << "client connected: " << client << std::endl;
+        m_engine.add_client(client);
+        m_queue.enqueue([this, client] {
+            handle(client);
         });
     };
 };

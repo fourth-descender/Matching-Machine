@@ -1,6 +1,7 @@
 #include "socks.hpp"
 
 namespace sock {
+    std::mutex sck_mutex;
     void shutdown(const int& s) {
         close(s);
         exit(EXIT_FAILURE);
@@ -70,6 +71,7 @@ namespace sock {
     };
 
     bool receive(const int& s, std::string& received, const int& buffer_size, const bool& server) {
+        std::lock_guard<std::mutex> lock(sck_mutex);
         char buffer[buffer_size];
         ssize_t bytes_read = recv(s, buffer, buffer_size - 1, 0);
 
