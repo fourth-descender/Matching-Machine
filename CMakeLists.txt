@@ -23,8 +23,13 @@ set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 
 file(GLOB SERVER_SOURCES "src/*.cpp")
 list(REMOVE_ITEM SERVER_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/client.cpp")
+list(REMOVE_ITEM SERVER_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/other_client.cpp")
 file(GLOB CLIENT_SOURCES "src/*.cpp")
 list(REMOVE_ITEM CLIENT_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp")
+list(REMOVE_ITEM CLIENT_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/other_client.cpp")
+file(GLOB OTHER_CLIENT_SOURCES "src/*.cpp")
+list(REMOVE_ITEM OTHER_CLIENT_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp")
+list(REMOVE_ITEM OTHER_CLIENT_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/client.cpp")
 
 # for server.
 add_executable(server ${SERVER_SOURCES})
@@ -35,3 +40,8 @@ target_link_libraries(server PRIVATE Threads::Threads)
 add_executable(client ${CLIENT_SOURCES})
 target_include_directories(client PRIVATE include)
 target_link_libraries(client PRIVATE Threads::Threads)
+
+# for other_client.
+add_executable(other_client ${OTHER_CLIENT_SOURCES})
+target_include_directories(other_client PRIVATE include)
+target_link_libraries(other_client PRIVATE Threads::Threads)

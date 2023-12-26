@@ -20,7 +20,7 @@ Follow these steps to build the project:
     cmake --build build
     ```
 
-This process will generate two executables, `server` and `client`, both located in `build/bin`.
+This process will generate three executables, `server`, `client`, and `other_client`, all located in `build/bin`.
 
 Alternatively, you can use the provided Dockerfile using the following command:
 
@@ -49,7 +49,21 @@ nc localhost 12345
 In the netcat window, type the orders you want to send.
 
 ### Client
-Use the client executable to automatically generate and send one million orders.
+
+The `client` and `other_client` executables are designed to automatically generate and send orders. You have the flexibility to use either of them based on your requirements:
+
+- To use the `client` executable, run the following command:
+  ```bash
+  build/bin/client
+  ```
+- Alternatively, you can use the other_client executable by running:
+  ```bash
+  build/bin/client
+  ```
+To run both processes simultaneously, execute the following command:
+```bash
+build/bin/client & build/bin/other_client
+```
 
 ### Calculating Average Processing Time
 To determine the average processing time of the server, follow these steps:

@@ -4,6 +4,7 @@
 #include <atomic>
 #include <string>
 #include <chrono>
+#include <fcntl.h>
 #include "jobs.hpp"
 #include "socks.hpp"
 #include "engine.hpp"
@@ -19,7 +20,7 @@ class server {
         ~server();
         void run();
     private:
-        void handle();
+        void handle(int client);
         void process(std::shared_ptr<std::istringstream> iss);
         bool parse(std::string& line, types::order& order);
 

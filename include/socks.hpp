@@ -12,12 +12,15 @@
 #include <memory>
 #include <netdb.h> 
 #include <functional>
+#include <mutex>
 
 struct in_addr;
 struct addrinfo;
 struct sockaddr_in;
 
 namespace sock {
+
+    extern std::mutex sck_mutex;
 
     void shutdown(const int& s);
     
