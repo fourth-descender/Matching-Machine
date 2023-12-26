@@ -15,8 +15,8 @@ namespace matcher {
         public:
             engine();
             ~engine() = default;
-            int get_client();
-            void set_client(const int& client);
+            void add_client(const int& client);
+            void remove_client(const int& client);
             void process(const types::order& order);
         private:
             void match();
@@ -27,7 +27,7 @@ namespace matcher {
             void process_symbol(const std::string& symbol);
             std::unique_ptr<types::book> m_book;
             job::queue m_queue{MAX_THREADS};
-            int m_client;
+            std::unordered_set<int> m_clients;
 
             std::mutex m_mutexes_mutex;
             std::unordered_map<std::string, std::shared_ptr<std::mutex>> m_mutexes;

@@ -18,6 +18,8 @@ struct addrinfo;
 struct sockaddr_in;
 
 namespace sock {
+
+    void shutdown(const int& s);
     
     void create(int& s);
 
@@ -33,7 +35,7 @@ namespace sock {
 
     void send(const int& s, const std::string& message);
 
-    void receive(const int& s, std::string& received, const int& buffer_size);
+    bool receive(const int& s, std::string& received, const int& buffer_size, const bool& verbose = false);
 
     void process_received(std::string& received, std::function<void(std::string&)> func);
 
@@ -44,7 +46,7 @@ namespace sock {
     void receive_from_server(const int& s, const int& buffer_size);
 
     // for docker.
-    in_addr resolve_hostname(const char* hostname);
+    in_addr resolve(const char* hostname);
 
 }
 

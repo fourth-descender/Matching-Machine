@@ -1,6 +1,11 @@
 #include "socks.hpp"
 
 namespace sock {
+    void shutdown(const int& s) {
+        close(s);
+        exit(EXIT_FAILURE);
+    };
+
     void create(int& s) {
         s = ::socket(AF_INET, SOCK_STREAM, 0);
         if (s < 0) {
@@ -24,21 +29,21 @@ namespace sock {
         // for docker -> 127.0.0.1 becomes the container itself.
         // could also be the case for a VM or invalid IP.
         if (addr.sin_addr.s_addr == INADDR_NONE) {
-            addr.sin_addr = resolve_hostname(ip);
+            addr.sin_addr = resolve(ip);
         }
     };
 
     void bind(int& s, sockaddr_in& addr) {
         if (::bind(s, (struct sockaddr*)&addr, sizeof(addr)) < 0) {
             std::cerr << "Error binding socket.\n";
-            exit(EXIT_FAILURE);
+            shutdown(s);
         }
     };
 
     void listen(int& s, const int& max, const int& port) {
         if (::listen(s, max) < 0) {
             std::cerr << "Error listening on port " << port << ".\n";
-            exit(EXIT_FAILURE);
+            shutdown(s);
         }
         std::cout << "Listening on port " << port << "...\n";
     };
@@ -46,41 +51,47 @@ namespace sock {
     void connect(int& s, sockaddr_in& addr) {
         if (::connect(s, (struct sockaddr*)&addr, sizeof(addr)) < 0) {
             std::cerr << "Error connecting to server.\n";
-            exit(EXIT_FAILURE);
+            shutdown(s);
         }
     };
 
     void send(const int& s, const std::string& message) {
         if (::send(s, message.c_str(), message.size(), 0) < 0) {
             std::cerr << "Error sending message.\n";
-            exit(EXIT_FAILURE);
+            return;
         }
     };
 
     void send_order(const int& s, const std::shared_ptr<char[]>& order) {
         if (::send(s, order.get(), strlen(order.get()), 0) < 0) {
             std::cerr << "Error sending order.\n";
-            close(s);
-            exit(EXIT_FAILURE);
+            shutdown(s);
         }
     };
 
-    void receive(const int& s, std::string& received, const int& buffer_size) {
+    bool receive(const int& s, std::string& received, const int& buffer_size, const bool& server) {
         char buffer[buffer_size];
         ssize_t bytes_read = recv(s, buffer, buffer_size - 1, 0);
-        if (bytes_read < 0) {
+
+        if (server && bytes_read <= 0) {
+            std::cerr << "Client disconnected.\n";
+            return false;
+        }
+        
+        else if (bytes_read < 0) {
             std::cerr << "Error reading from socket.\n";
-            exit(EXIT_FAILURE);
+            shutdown(s);
         }
 
-        if (bytes_read == 0) {
+        else if (bytes_read == 0) {
             std::cout << "Server disconnected.\n";
-            close(s);
-            exit(EXIT_FAILURE);
+            shutdown(s);
         }
 
         buffer[bytes_read] = '\0';
         received.append(buffer);
+
+        return true;
     };
 
     void receive_from_server(const int& s, const int& buffer_size) {
@@ -108,7 +119,7 @@ namespace sock {
         }
     };
 
-    in_addr resolve_hostname(const char* hostname) {
+    in_addr resolve(const char* hostname) {
         addrinfo hints, *res;
         memset(&hints, 0, sizeof(hints));
         hints.ai_family = AF_INET;

@@ -26,7 +26,11 @@ void server::handle() {
     std::string received; // Store the received data
 
     while (m_running) {
-        sock::receive(m_client, received, BUFFER_SIZE);
+        bool success = sock::receive(m_client, received, BUFFER_SIZE, true);
+        if (!success) {
+            m_engine.remove_client(m_client);
+            return;
+        };
         sock::process_received(received, [this](std::string& message) {
             std::shared_ptr<std::istringstream> iss = std::make_shared<std::istringstream>(message);
             m_queue.enqueue([this, iss] {
@@ -35,6 +39,7 @@ void server::handle() {
         });
     };
 
+    m_engine.remove_client(m_client);
     close(m_client);
 };
 
@@ -76,12 +81,12 @@ void server::process(std::shared_ptr<std::istringstream> iss) {
 
 void server::run() {
     while (m_running) {
-        if ((m_client = accept(m_socket, reinterpret_cast<struct sockaddr*>(&m_client_addr), &m_client_len)) < 0) { // Fix syntax error by adding parentheses around the assignment
+        if ((m_client = accept(m_socket, reinterpret_cast<struct sockaddr*>(&m_client_addr), &m_client_len)) < 0) { 
             std::cerr << "Error accepting client.\n";
-            exit(EXIT_FAILURE);
+            continue;
         };
 
-        m_engine.set_client(m_client);
+        m_engine.add_client(m_client);
         m_queue.enqueue([this] {
             handle();
         });

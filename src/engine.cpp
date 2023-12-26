@@ -1,17 +1,16 @@
 #include "engine.hpp"
 
 namespace matcher {
-    engine::engine() :
-        m_client(-1) {
+    engine::engine() {
             m_book = std::make_unique<types::book>();
     };
 
-    void engine::set_client(const int& client) {
-        m_client = client;
+    void engine::add_client(const int& client) {
+        m_clients.insert(client);
     };
 
-    int engine::get_client() {
-        return m_client;
+    void engine::remove_client(const int& client) {
+        m_clients.erase(client);
     };
 
     void engine::insert(const std::string& symbol) {
@@ -37,9 +36,9 @@ namespace matcher {
     };
 
     void engine::send(const std::string& message) {
-        if (m_client > 0) {
-            m_queue.enqueue([this, message] {
-                sock::send(m_client, message);
+        for (const auto& client : m_clients) {
+            m_queue.enqueue([this, client, message] {
+                sock::send(client, message);
             });
         };
     };
