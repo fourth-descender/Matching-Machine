@@ -25,7 +25,7 @@ server::~server() {
 };
 
 void server::handle(int client) {
-    std::string received; // Store the received data
+    std::string received;
 
     while (m_running) {
         bool success = sock::receive(client, received, BUFFER_SIZE, true);
